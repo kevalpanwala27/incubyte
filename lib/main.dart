@@ -37,7 +37,12 @@ class _StringCalculatorDemoState extends State<StringCalculatorDemo> {
   void _calculate() {
     setState(() {
       try {
-        final result = _calculator.add(_inputController.text);
+        String input = _inputController.text.trim();
+        if (input.startsWith('"') && input.endsWith('"')) {
+          input = input.substring(1, input.length - 1);
+        }
+
+        final result = _calculator.add(input);
         _result = 'Result: $result';
         _errorMessage = '';
       } catch (e) {
@@ -74,7 +79,7 @@ class _StringCalculatorDemoState extends State<StringCalculatorDemo> {
               controller: _inputController,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
-                hintText: 'e.g., "1,2,3" or "//;\n1;2" or "1\n2,3"',
+                hintText: 'e.g., 1,2,3 or //;\n1;2 or 1\n2,3',
                 labelText: 'Input String',
               ),
               maxLines: 3,
@@ -94,7 +99,10 @@ class _StringCalculatorDemoState extends State<StringCalculatorDemo> {
                 ),
                 child: Text(
                   _result,
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -117,13 +125,31 @@ class _StringCalculatorDemoState extends State<StringCalculatorDemo> {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
-            _buildExample('Empty string', '""', '0'),
-            _buildExample('Single number', '"1"', '1'),
-            _buildExample('Two numbers', '"1,5"', '6'),
-            _buildExample('Multiple numbers', '"1,2,3,4,5"', '15'),
-            _buildExample('New lines', '"1\\n2,3"', '6'),
-            _buildExample('Custom delimiter', '"//;\\n1;2"', '3'),
-            _buildExample('Negative numbers', '"-1,2"', 'Error: negative numbers not allowed -1'),
+            _buildExample('Empty string', '', '0'),
+            _buildExample('Single number', '1', '1'),
+            _buildExample('Two numbers', '1,5', '6'),
+            _buildExample('Multiple numbers', '1,2,3,4,5', '15'),
+            _buildExample('New lines', '1\n2,3', '6'),
+            _buildExample('Custom delimiter', '//;\n1;2', '3'),
+            _buildExample(
+              'Negative numbers',
+              '-1,2',
+              'Error: negative numbers not allowed -1',
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Try These Inputs:',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            const Text(
+              '• 1,2,3 (comma-separated)\n'
+              '• 1\\n2,3 (mixed new lines and commas)\n'
+              '• //;\\n1;2 (custom semicolon delimiter)\n'
+              '• -1,2 (negative numbers - will show error)',
+              style: TextStyle(fontSize: 14, fontFamily: 'monospace'),
+              textAlign: TextAlign.left,
+            ),
           ],
         ),
       ),
@@ -135,16 +161,10 @@ class _StringCalculatorDemoState extends State<StringCalculatorDemo> {
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
-          Expanded(
-            flex: 2,
-            child: Text(description),
-          ),
+          Expanded(flex: 2, child: Text(description)),
           Expanded(
             flex: 3,
-            child: Text(
-              input,
-              style: const TextStyle(fontFamily: 'monospace'),
-            ),
+            child: Text(input, style: const TextStyle(fontFamily: 'monospace')),
           ),
           Expanded(
             flex: 2,

@@ -11,10 +11,8 @@ import 'package:incubyte/main.dart';
 
 void main() {
   testWidgets('StringCalculatorApp smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
     await tester.pumpWidget(const StringCalculatorApp());
 
-    // Verify that our app shows the title
     expect(find.text('String Calculator TDD Kata'), findsOneWidget);
     expect(find.text('String Calculator Demo'), findsOneWidget);
   });
